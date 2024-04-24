@@ -30,7 +30,16 @@ const Login = ({ isAuthenticated, setIsAuthenticated, setToken }) => {
   };
 
   if (loading) return <Loader />;
-  if (isAuthenticated) return <Navigate to='/app/create' />;
+  // If the user is authenticated, redirect them to the next page they were trying to access
+  if (isAuthenticated)
+    return (
+      <Navigate
+        to={{
+          pathname: location.state ? location.state.next : '/app/create',
+          from: location.pathname
+        }}
+      />
+    );
 
   return (
     <form
