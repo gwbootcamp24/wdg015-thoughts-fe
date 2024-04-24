@@ -43,7 +43,7 @@ const App = () => {
       <NavBar isAuthenticated={isAuthenticated} user={user} logout={logout} />
       <Routes>
         <Route path='/' element={<GlobalLayout />}>
-          <Route index element={<Home />} />
+          <Route index element={<Home user={user} />} />
           <Route
             path='login'
             element={

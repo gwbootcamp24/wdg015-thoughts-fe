@@ -1,17 +1,11 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import Loader from './Loader';
-import { createThought } from '../utils/thoughtsUtils';
+import { updateThought } from '../utils/thoughtsUtils';
 
-const CreateThought = () => {
-  const [{ image, body }, setFormState] = useState({
-    image: '',
-    body: ''
-  });
+const EditThought = ({ thought, setCurrentEdit, setThoughts }) => {
+  const [{ image, body }, setFormState] = useState(thought);
   const [loading, setLoading] = useState(false);
-
-  const navigate = useNavigate();
 
   const handleChange = e => setFormState(prev => ({ ...prev, [e.target.id]: e.target.value }));
 
@@ -20,8 +14,9 @@ const CreateThought = () => {
       setLoading(true);
       e.preventDefault();
       if (!image || !body) return alert('Please fill out all the fields');
-      await createThought({ image, body });
-      navigate(`/`);
+      const updatedThought = await updateThought({ image, body }, thought._id);
+      setThoughts(prevState => prevState.map(t => (t._id === thought._id ? updatedThought : t)));
+      setCurrentEdit(null);
     } catch (error) {
       toast.error(error.response?.data.error || error.message);
     } finally {
@@ -36,7 +31,7 @@ const CreateThought = () => {
       className='row flex-column align-items-center justify-content-center gap-4'
       onSubmit={handleSubmit}
     >
-      <div className='col-lg-6'>
+      <div className='col-lg'>
         <label htmlFor='image'>Image</label>
         <input
           id='image'
@@ -57,11 +52,11 @@ const CreateThought = () => {
       </div>
       <div className='col-lg-6 text-center'>
         <button className='btn btn-lg btn-primary' type='submit'>
-          Share thought
+          Edit thought
         </button>
       </div>
     </form>
   );
 };
 
-export default CreateThought;
+export default EditThought;
